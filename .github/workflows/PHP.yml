@@ -15,6 +15,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Setup PHP Action
+        uses: shivammathur/setup-php@2.30.4
+        with:
+          php-version: '8.2'
+
       - uses: actions/checkout@v4
 
       - name: Validate composer.json and composer.lock
@@ -31,8 +36,6 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
-        with:
-          php-version: 8.2
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
