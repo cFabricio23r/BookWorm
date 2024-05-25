@@ -2,15 +2,17 @@
 
 namespace App\Actions;
 
-use App\DTOs\StoreEditSummary;
+use App\DTOs\StoreEditSummaryDTO;
 use App\Enums\OpenAIModelEnum;
 use App\Http\Resources\SummaryResource;
 use App\Models\Summary;
 use App\Responses\DataResponse;
 use Exception;
+use Illuminate\Http\UploadedFile;
 use JustSteveKing\StatusCode\Http;
 use Smalot\PdfParser\Page;
 use Smalot\PdfParser\Parser;
+use Smalot\PdfParser\PDFObject;
 use Spatie\LaravelData\Support\Types\Type;
 use Supports\Traits\OpenAITrait;
 
@@ -21,7 +23,7 @@ class StoreSummaryAction
     /**
      * @throws Exception
      */
-    public function execute(StoreEditSummary $summarizeDTO): DataResponse
+    public function execute(StoreEditSummaryDTO $summarizeDTO): DataResponse
     {
         if ($summarizeDTO->isRequiredFieldFilled()) {
             $book = $this->parseAndProcessPdf($summarizeDTO->file);
@@ -72,7 +74,7 @@ class StoreSummaryAction
     /**
      * @throws Exception
      */
-    private function parseAndProcessPdf(string $file): mixed
+    private function parseAndProcessPdf(UploadedFile|PDFObject|string $file): mixed
     {
         $parser = new Parser();
         $pdf = $parser->parseFile($file);

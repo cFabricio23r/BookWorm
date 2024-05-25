@@ -22,6 +22,10 @@ return [
 
     'auth_per_minute' => env('AUTH_PER_MINUTE', 5),
 
+    'per_page' => env('PER_PAGE', 10),
+
+    'per_page_filter_name' => 'perPage',
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

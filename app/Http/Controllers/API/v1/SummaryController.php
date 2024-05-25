@@ -7,7 +7,7 @@ use App\Actions\ListSummaryAction;
 use App\Actions\ShowSummaryAction;
 use App\Actions\StoreSummaryAction;
 use App\DTOs\ChatSummaryDTO;
-use App\DTOs\StoreEditSummary;
+use App\DTOs\StoreEditSummaryDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChatSummaryRequest;
 use App\Http\Requests\ListSummaryRequest;
@@ -31,7 +31,7 @@ class SummaryController extends Controller
      */
     public function store(StoreSummaryRequest $request, StoreSummaryAction $action): DataResponse
     {
-        $dto = StoreEditSummary::fromRequest($request);
+        $dto = StoreEditSummaryDTO::fromRequest($request);
 
         return $action->execute($dto);
     }
