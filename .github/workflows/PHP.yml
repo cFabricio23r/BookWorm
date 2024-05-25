@@ -73,7 +73,11 @@ jobs:
           DB_PORT: ${{ job.services.postgres.ports[5432] }}
 
       - name: Run Tests
-        run: composer run verify-dev
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+          php artisan key:generate
+          composer run verify-dev
+        env:
+          DB_PORT: ${{ job.services.postgres.ports[5432] }}
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
