@@ -7,7 +7,9 @@ use App\Enums\OpenAIModelEnum;
 use App\Responses\DataResponse;
 use Exception;
 use JustSteveKing\StatusCode\Http;
+use Smalot\PdfParser\Page;
 use Smalot\PdfParser\Parser;
+use Spatie\LaravelData\Support\Types\Type;
 use Supports\Traits\OpenAITrait;
 
 class SummarizeAction
@@ -30,6 +32,9 @@ class SummarizeAction
         );
     }
 
+    /**
+     * @param  array<Type>  $book
+     */
     private function generateSummary(array $book): mixed
     {
         return $this->chatOpenAI(
@@ -47,7 +52,7 @@ class SummarizeAction
     /**
      * @throws Exception
      */
-    private function parseAndProcessPdf(string $file): array
+    private function parseAndProcessPdf(string $file): mixed
     {
         $parser = new Parser();
         $pdf = $parser->parseFile($file);
@@ -56,9 +61,9 @@ class SummarizeAction
     }
 
     /**
-     * @return array|array[]
+     * @param  array<Page>  $pages
      */
-    private function processPages($pages): array
+    private function processPages(array $pages): mixed
     {
         return array_map(function ($page) {
             return $this->userMessage($page->getText());

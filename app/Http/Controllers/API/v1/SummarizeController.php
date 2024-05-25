@@ -6,6 +6,8 @@ use App\Actions\SummarizeAction;
 use App\DTOs\SummarizeDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SummarizeRequest;
+use App\Responses\DataResponse;
+use Exception;
 
 class SummarizeController extends Controller
 {
@@ -14,12 +16,13 @@ class SummarizeController extends Controller
 
     }
 
-    public function summarize(SummarizeRequest $request, SummarizeAction $action)
+    /**
+     * @throws Exception
+     */
+    public function summarize(SummarizeRequest $request, SummarizeAction $action): DataResponse
     {
         $dto = SummarizeDTO::fromRequest($request);
 
-        $test = $action->execute($dto);
-
-        return $test;
+        return $action->execute($dto);
     }
 }
