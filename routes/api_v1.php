@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\v1\AuthController;
-use App\Http\Controllers\API\v1\SummarizeController;
+use App\Http\Controllers\API\v1\SummaryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,10 +26,13 @@ Route::middleware(['throttle:auth'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::controller(SummarizeController::class)
-        ->prefix('summarize')
-        ->name('summarize.')
+    Route::controller(SummaryController::class)
+        ->prefix('summary')
+        ->name('summary.')
         ->group(function () {
-            Route::post('/', 'summarize')->name('summarize');
+            Route::post('/', 'store')->name('store');
+            Route::get('/', 'index')->name('index');
+            Route::get('/{summary}', 'show')->name('show');
+            Route::post('/{summary}/chat', 'chat')->name('chat');
         });
 });

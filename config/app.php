@@ -18,6 +18,10 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'api_per_minute' => env('API_PER_MINUTE', 60),
+
+    'auth_per_minute' => env('AUTH_PER_MINUTE', 5),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

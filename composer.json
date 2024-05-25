@@ -16,6 +16,7 @@
         "openai-php/laravel": "^0.9.0",
         "smalot/pdfparser": "^2.10",
         "spatie/laravel-data": "^4.6",
+        "spatie/laravel-query-builder": "^6.0",
         "spatie/pdf-to-text": "^1.52"
     },
     "require-dev": {

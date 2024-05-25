@@ -18,8 +18,8 @@ class LoginDTO extends AbstractDTO
     public static function FromRequest(FormRequest $request): LoginDTO
     {
         return new self(
-            password: get_request_string_default_null('user.password'),
-            email: get_request_string_default_null('user.email'),
+            password: get_request_string_default_null('password'),
+            email: get_request_string_default_null('email'),
         );
     }
 }

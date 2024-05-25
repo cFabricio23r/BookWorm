@@ -2,8 +2,10 @@
 
 namespace App\Actions;
 
-use App\DTOs\SummarizeDTO;
+use App\DTOs\StoreEditSummary;
 use App\Enums\OpenAIModelEnum;
+use App\Http\Resources\SummaryResource;
+use App\Models\Summary;
 use App\Responses\DataResponse;
 use Exception;
 use JustSteveKing\StatusCode\Http;
@@ -12,24 +14,42 @@ use Smalot\PdfParser\Parser;
 use Spatie\LaravelData\Support\Types\Type;
 use Supports\Traits\OpenAITrait;
 
-class SummarizeAction
+class StoreSummaryAction
 {
     use OpenAITrait;
 
     /**
      * @throws Exception
      */
-    public function execute(SummarizeDTO $summarizeDTO): DataResponse
+    public function execute(StoreEditSummary $summarizeDTO): DataResponse
     {
-        $book = $this->parseAndProcessPdf($summarizeDTO->file);
+        if ($summarizeDTO->isRequiredFieldFilled()) {
+            $book = $this->parseAndProcessPdf($summarizeDTO->file);
 
-        $result = $this->generateSummary($book);
+            $result = $this->generateSummary($book);
+
+            $summary = new Summary([
+                ...$result,
+                'user_id' => auth()->id(),
+                'created_by' => auth()->id(),
+                'updated_by' => auth()->id(),
+                'context' => $book,
+            ]);
+
+            $summary->save();
+
+            return new DataResponse(
+                data: new SummaryResource($summary),
+                status: Http::OK,
+                message: 'Summary created successfully'
+            );
+        }
 
         return new DataResponse(
-            data: $result,
-            status: Http::OK,
-            message: 'Summary created successfully'
+            status: Http::UNPROCESSABLE_ENTITY,
+            message: 'Please fill all required fields'
         );
+
     }
 
     /**

@@ -5,9 +5,9 @@ namespace App\DTOs;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
 
-class SummarizeDTO extends AbstractDTO
+class StoreEditSummary extends AbstractDTO
 {
-    protected array $requiredFields = [];
+    protected array $requiredFields = ['file'];
 
     public function __construct(
         public UploadedFile|string|null $file = null,
@@ -15,7 +15,7 @@ class SummarizeDTO extends AbstractDTO
 
     }
 
-    public static function FromRequest(FormRequest $request): SummarizeDTO
+    public static function FromRequest(FormRequest $request): StoreEditSummary
     {
         return new self(
             file: $request->file('file'),

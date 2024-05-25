@@ -27,7 +27,7 @@ class RegisterRequest extends FormRequest
             'user' => ['array', 'required'],
             'user.name' => ['string', 'required', 'max:50'],
             'user.lastname' => ['string', 'sometimes', 'nullable', 'max:50'],
-            'user.email' => ['string', 'requires', 'email', (new Unique('users', 'email'))->withoutTrashed()],
+            'user.email' => ['string', 'required', 'email', (new Unique('users', 'email'))->withoutTrashed()],
             'user.password' => ['string', 'required', $this->getPasswordRules()],
         ];
     }

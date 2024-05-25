@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'function_request' => 'Perform function requests for the user',
+    'function_request' => 'Perform function requests for the user following the instructions',
 
     'book_summary_function' => [
         'name' => 'book_summary',
-        'description' => 'Get a full and detail insight of book provided by the user',
+        'description' => 'Get a full detailed insight of book provided by the user',
         'parameters' => [
             'type' => 'object',
             'properties' => [
@@ -28,15 +28,15 @@ return [
                         'properties' => [
                             'aspect' => [
                                 'type' => 'string',
-                                'description' => 'Provide a key aspect of the book',
+                                'description' => 'Provide a title of each key aspect',
                             ],
                             'page' => [
                                 'type' => 'string',
-                                'description' => 'The page number where the key aspect was found',
+                                'description' => 'The page number where each key aspect was found',
                             ],
                             'description' => [
                                 'type' => 'string',
-                                'description' => 'Provide a comprehensive analysis of the key aspect provided, text must be at least 100 words',
+                                'description' => 'Provide a comprehensive analysis of each key aspect provided, text must be at least 100 words',
                             ],
                         ],
                         'required' => [
@@ -45,7 +45,7 @@ return [
                             'description',
                         ],
                     ],
-                    'description' => "Provide 5 key aspects of the book taking as criteria the following: Brief plot summary, main themes explored in the book, significant quotes with context. Avoid the pages that may be or contains the following: cover, abstract, bibliography, table of contents, references, index and another information which is not part of the book's content itself",
+                    'description' => "List of five key aspects of the book avoiding the pages that may be or contains the following: cover, abstract, bibliography, table of contents, references, index and another information which is not part of the book's content itself",
                 ],
                 'summary' => [
                     'type' => 'string',
