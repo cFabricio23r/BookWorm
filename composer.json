@@ -92,7 +92,7 @@
         "test-ci-feature": [
             "@php -d memory_limit=-1 artisan test --stop-on-failure --compact --profile --order-by=defects --group=feature --parallel"
         ],
-        "verify-local-dev": [
+        "verify-dev": [
             "@phpstan",
             "@pint",
             "@test-local",
