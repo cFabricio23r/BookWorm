@@ -1,2 +1,76 @@
 parameters:
-	ignoreErrors: []
+	ignoreErrors:
+		-
+			message: "#^Method App\\\\Actions\\\\SummarizeAction\\:\\:generateSummary\\(\\) has parameter \\$book with no type specified\\.$#"
+			count: 1
+			path: app/Actions/SummarizeAction.php
+
+		-
+			message: "#^Method App\\\\Actions\\\\SummarizeAction\\:\\:parseAndProcessPdf\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Actions/SummarizeAction.php
+
+		-
+			message: "#^Method App\\\\Actions\\\\SummarizeAction\\:\\:processPages\\(\\) has parameter \\$pages with no type specified\\.$#"
+			count: 1
+			path: app/Actions/SummarizeAction.php
+
+		-
+			message: "#^Method App\\\\Actions\\\\SummarizeAction\\:\\:processPages\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Actions/SummarizeAction.php
+
+		-
+			message: "#^Method App\\\\Contracts\\\\DTOContract\\:\\:toArrayWithoutNull\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Contracts/DTOContract.php
+
+		-
+			message: "#^Property App\\\\DTOs\\\\AbstractDTO\\:\\:\\$requiredFields type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/DTOs/AbstractDTO.php
+
+		-
+			message: "#^Property App\\\\DTOs\\\\SummarizeDTO\\:\\:\\$requiredFields type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/DTOs/SummarizeDTO.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\API\\\\v1\\\\SummarizeController\\:\\:summarize\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: app/Http/Controllers/API/v1/SummarizeController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Requests\\\\SummarizeRequest\\:\\:rules\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Requests/SummarizeRequest.php
+
+		-
+			message: "#^PHPDoc tag @mixin contains unknown class App\\\\Models\\\\IdeHelperUser\\.$#"
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: "#^Method App\\\\Responses\\\\CollectionResponse\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Responses/CollectionResponse.php
+
+		-
+			message: "#^Method App\\\\Responses\\\\CollectionResponse\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type array\\|Illuminate\\\\Http\\\\Resources\\\\Json\\\\ResourceCollection\\.$#"
+			count: 1
+			path: app/Responses/CollectionResponse.php
+
+		-
+			message: "#^Method App\\\\Responses\\\\DataResponse\\:\\:__construct\\(\\) has parameter \\$data with generic class Illuminate\\\\Database\\\\Eloquent\\\\Collection but does not specify its types\\: TKey, TModel$#"
+			count: 1
+			path: app/Responses/DataResponse.php
+
+		-
+			message: "#^Method App\\\\Responses\\\\DataResponse\\:\\:__construct\\(\\) has parameter \\$data with generic class Illuminate\\\\Pagination\\\\LengthAwarePaginator but does not specify its types\\: TValue$#"
+			count: 1
+			path: app/Responses/DataResponse.php
+
+		-
+			message: "#^Method App\\\\Responses\\\\DataResponse\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Responses/DataResponse.php

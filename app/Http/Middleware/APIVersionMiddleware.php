@@ -14,14 +14,12 @@ class APIVersionMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  Request  $request
-     * @param  Closure  $next
-     * @param  string  $guard
      * @return \Illuminate\Http\Response|RedirectResponse|JsonResponse|StreamedResponse
      */
     public function handle(Request $request, Closure $next, string $guard): Response|RedirectResponse|JsonResponse|StreamedResponse
     {
         config(['app.api.version' => $guard]);
+
         return $next($request);
     }
 }

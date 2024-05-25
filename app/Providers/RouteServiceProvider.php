@@ -19,15 +19,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/home';
 
-    /**
-     *
-     */
     private const BASE = 'App\Http\Controllers';
 
-    /**
-     * @var string
-     */
-    protected string $apiNamespace = self::BASE . '\API';
+    protected string $apiNamespace = self::BASE.'\API';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
@@ -46,14 +40,11 @@ class RouteServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * @return void
-     */
     protected function mapApiRoutes(): void
     {
         Route::middleware(['api', 'api_version:v1'])
             ->namespace("{$this->apiNamespace}\\v1")
-            ->prefix("api/v1")
+            ->prefix('api/v1')
             ->group(base_path('routes/api_v1.php'));
     }
 }
