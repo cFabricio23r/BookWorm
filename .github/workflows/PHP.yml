@@ -23,6 +23,7 @@ jobs:
       DB_PASSWORD: postgres
       DB_USERNAME: postgres
       DB_DATABASE: postgres
+      APP_ENV: development
 
     # Docs: https://docs.github.com/en/actions/using-containerized-services
     services:
