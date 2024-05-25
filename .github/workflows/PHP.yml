@@ -73,8 +73,8 @@ jobs:
           DB_PORT: ${{ job.services.postgres.ports[5432] }}
 
       - name: Run Tests
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-          php artisan key:generate
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');" &&
+          php artisan key:generate &&
           composer run verify-dev
         env:
           DB_PORT: ${{ job.services.postgres.ports[5432] }}
