@@ -138,9 +138,14 @@ jobs:
           script: |
             sudo apt-get update
             sudo apt-get install docker.io -y
+            sudo apt-get install unzip -y
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            sudo $(aws ecr get-login-password --region us-east-1)
             sudo docker stop $ECR_REPOSITORY || true
             sudo docker rm $ECR_REPOSITORY || true
             sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-            sudo docker run  -p 80:8000 -d --name $ECR_REPOSITORY $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+            sudo docker run -p 80:8000 -d --name $ECR_REPOSITORY $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
 
