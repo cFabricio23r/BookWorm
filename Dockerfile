@@ -41,11 +41,13 @@ RUN apk add --no-cache \
   php82-iconv \
   icu-data-full \
   supervisor \
+  php82-pgsql \
+  php82-pdo_pgsql \
   bash
 
 # Install Composer
 # Create symlink so programs depending on `php` still function
-RUN ln -s /usr/bin/php82 /usr/bin/php
+RUN ln -sf /usr/bin/php82 /usr/bin/php
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- \
@@ -67,9 +69,6 @@ COPY /docker/config/php.ini /etc/php82/conf.d/custom.ini
 
 # Configure supervisord
 COPY /docker/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY /docker/config/supervisord-horizon.conf /etc/supervisor/conf.d/supervisord-horizon.conf
-COPY /docker/config/supervisord-queue.conf /etc/supervisor/conf.d/supervisord-queue.conf
-COPY /docker/config/supervisord-websockets.conf /etc/supervisor/conf.d/supervisord-websockets.conf
 
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
 RUN chown -R nobody.nobody /var/www/html /run /var/lib/nginx /var/log/nginx /var/log/php82
