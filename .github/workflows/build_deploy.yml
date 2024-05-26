@@ -66,8 +66,8 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.AWS_INSTANCE_IP }}
-          username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
+          envs: AWS_INSTANCE_IP,ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG,SSH_KEY
           script: |
             docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
             docker stop $ECR_REPOSITORY || true
