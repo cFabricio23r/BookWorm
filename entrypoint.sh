@@ -1,6 +1,6 @@
 #!/bin/sh
 
-eval $(aws s3 cp s3://book-worm-test/book_worm_test.env - | sed 's/^/export /')
+eval $(aws s3 cp s3://book-worm-test/envs - | sed 's/^/export /')
 
 echo 'starting web server'
 
