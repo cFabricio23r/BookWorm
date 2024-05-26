@@ -151,7 +151,7 @@ jobs:
             sudo aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
             sudo aws configure set region us-east-1
             sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY/$ECR_REPOSITORY
-            aws s3 cp s3://book-worm-test/envs/.env .env
+            aws s3 cp s3://book-worm-test/envs/.env.example .env
             sudo docker system prune --all --force
             sudo docker stop $ECR_REPOSITORY || true
             sudo docker rm $ECR_REPOSITORY || true
