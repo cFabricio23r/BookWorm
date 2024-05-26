@@ -1,7 +1,5 @@
 #!/bin/sh
 
-eval $(aws s3 cp s3://book-worm-test/envs - | sed 's/^/export /')
-
 echo 'starting web server'
 
 # Run database migrations
