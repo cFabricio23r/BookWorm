@@ -110,11 +110,14 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
           IMAGE_TAG: ${{ steps.get-commit-hash.outputs.commit-hash }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.AWS_INSTANCE_IP }}
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
+          envs: ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
           script: |
             sudo apt-get update
             sudo apt-get install docker.io -y
@@ -122,10 +125,10 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-            sudo aws configure set aws_access_key_id AKIAU6GDVI3A6GIJ5IUV
-            sudo aws configure set aws_secret_access_key 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
+            sudo aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            sudo aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
             sudo aws configure set region us-east-1
-            sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 339712755393.dkr.ecr.us-east-1.amazonaws.com/book_worm
+            sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY/$ECR_REPOSITORY
             sudo docker stop $ECR_REPOSITORY || true
             sudo docker rm $ECR_REPOSITORY || true
             sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
