@@ -1,0 +1,162 @@
+name: PHP Composer
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    env:
+      BROADCAST_DRIVER: log
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      DB_CONNECTION: pgsql
+      DB_HOST: localhost
+      DB_PASSWORD: postgres
+      DB_USERNAME: postgres
+      DB_DATABASE: postgres
+      APP_ENV: development
+
+    # Docs: https://docs.github.com/en/actions/using-containerized-services
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432/tcp
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
+
+    steps:
+      - name: Setup PHP Action
+        uses: shivammathur/setup-php@2.30.4
+        with:
+          php-version: '8.2'
+
+      - uses: actions/checkout@v4
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Prepare the application
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+          php artisan key:generate
+
+      - name: Clear Config
+        run: php artisan config:clear
+
+      - name: Run Migration
+        run: php artisan migrate
+        env:
+          DB_PORT: ${{ job.services.postgres.ports[5432] }}
+
+      - name: Run Tests
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');" &&
+          php artisan key:generate &&
+          composer run verify-dev
+        env:
+          DB_PORT: ${{ job.services.postgres.ports[5432] }}
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Get commit hash
+        id: get-commit-hash
+        run: echo "::set-output name=commit-hash::$(git rev-parse --short HEAD)"
+
+      - name: Build, tag, and push the image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+          IMAGE_TAG: ${{ steps.get-commit-hash.outputs.commit-hash }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Get commit hash
+        id: get-commit-hash
+        run: echo "::set-output name=commit-hash::$(git rev-parse --short HEAD)"
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Deploy docker image to EC2
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+          IMAGE_TAG: ${{ steps.get-commit-hash.outputs.commit-hash }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_INSTANCE_IP }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
+          script: |
+            sudo apt-get update
+            sudo apt-get install docker.io -y
+            sudo apt-get install unzip -y
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            sudo aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            sudo aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            sudo aws configure set region us-east-1
+            sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $ECR_REGISTRY/$ECR_REPOSITORY
+            aws s3 cp s3://book-worm-test/envs/.env.example .env
+            sudo docker system prune --all --force
+            sudo docker stop $ECR_REPOSITORY || true
+            sudo docker rm $ECR_REPOSITORY || true
+            sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+            sudo docker run --env-file .env -p 8000:8000 -d --name $ECR_REPOSITORY $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+
