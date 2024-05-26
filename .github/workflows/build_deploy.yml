@@ -142,8 +142,9 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-            sudo aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-            sudo aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            sudo aws configure set aws_access_key_id AKIAU6GDVI3A6GIJ5IUV
+            sudo aws configure set aws_secret_access_key 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
+            sudo aws configure set region us-east-1
             sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 339712755393.dkr.ecr.us-east-1.amazonaws.com/book_worm
             sudo docker stop $ECR_REPOSITORY || true
             sudo docker rm $ECR_REPOSITORY || true
