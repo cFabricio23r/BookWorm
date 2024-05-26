@@ -69,9 +69,9 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           envs: AWS_INSTANCE_IP,ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG,SSH_KEY
           script: |
-            sudo apt update
-            sudo apt install docker.io -y
-            sudo apt install awscli -y
+            sudo apt-get update
+            sudo apt-get install docker.io -y
+            sudo apt-get install awscli -y
             sudo $(aws ecr get-login --no-include-email --region us-east-1)
             sudo docker stop $ECR_REPOSITORY || true
             sudo docker rm $ECR_REPOSITORY || true
