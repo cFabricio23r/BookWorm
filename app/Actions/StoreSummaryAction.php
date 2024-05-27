@@ -60,7 +60,7 @@ class StoreSummaryAction
     private function generateSummary(array $book): mixed
     {
         return $this->chatOpenAI(
-            OpenAIModelEnum::GPT3,
+            OpenAIModelEnum::GPT4,
             [
                 $this->systemMessage(config('prompts.function_request')),
                 ...$book,
