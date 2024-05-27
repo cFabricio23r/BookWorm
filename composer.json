@@ -96,7 +96,7 @@
         "verify-dev": [
             "@phpstan",
             "@pint",
-            "@test-local",
+            "@php artisan test",
             "@update-ide-helpers"
         ]
     },
