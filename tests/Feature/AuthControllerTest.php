@@ -14,6 +14,8 @@ test('User can login with valid credentials', function () {
     ];
     $response = $this->postJson(route('auth.login'), $data);
 
+    dump($response->json());
+
     $response->assertOk();
     expect($response->json('data.token'))->not->toBeNull()
         ->and($response->json('data.user.id'))->not->toBeNull();
@@ -29,6 +31,7 @@ test('User cannot login with valid credentials', function () {
         'password' => 'passworD123Wrong',
     ];
     $response = $this->postJson(route('auth.login'), $data);
+    dump($response->json());
 
     $response->assertUnauthorized();
 });
@@ -46,6 +49,7 @@ it('user can register', function () {
     ];
 
     $response = $this->postJson(route('auth.register'), $body);
+    dump($response->json());
 
     $response->assertCreated();
 
