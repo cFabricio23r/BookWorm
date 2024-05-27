@@ -50,7 +50,7 @@ class ChatSummaryAction
     private function chat(array $context, array $question): mixed
     {
         return $this->chatOpenAI(
-            OpenAIModelEnum::GPT3,
+            OpenAIModelEnum::GPT4,
             [
                 ...$context,
                 ...$question,
