@@ -90,6 +90,10 @@ trait OpenAITrait
 
         $result = $messageList->data[0]->content[0]->text->value;
 
+        if (str_contains($result, '```json')) {
+            $result = get_string_between($result, '```json', '```');
+        }
+
         return json_validate($result) ? json_decode($result, true) : $result;
     }
 

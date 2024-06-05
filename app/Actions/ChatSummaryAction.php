@@ -25,14 +25,22 @@ class ChatSummaryAction
             );
         }
 
-        $answer = $this->chatWithExistingThread($summary->assistant_id, $chatSummaryDTO->question, $summary->thread_id);
+        try {
+            $answer = $this->chatWithExistingThread($summary->assistant_id, $chatSummaryDTO->question, $summary->thread_id);
 
-        return new DataResponse(
-            data: [
-                'answer' => $answer,
-            ],
-            status: Http::OK,
-            message: 'Summary created successfully'
-        );
+            return new DataResponse(
+                data: [
+                    'answer' => $answer,
+                ],
+                status: Http::OK,
+                message: 'Summary created successfully'
+            );
+        } catch (Exception $exception) {
+            report($exception);
+            return new DataResponse(
+                status: Http::INTERNAL_SERVER_ERROR,
+                message: $exception->getMessage()
+            );
+        }
     }
 }

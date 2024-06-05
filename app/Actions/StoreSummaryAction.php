@@ -25,26 +25,33 @@ class StoreSummaryAction
                 message: 'Please fill all required fields'
             );
         }
+        try {
+            $result = $this->startAssistantWithThread(
+                $summarizeDTO->file,
+                config('assistants.book_worm'),
+                config('prompts.initial_message')
+            );
 
-        $result = $this->startAssistantWithThread(
-            $summarizeDTO->file,
-            config('assistants.book_worm'),
-            config('prompts.initial_message')
-        );
+            $summary = new Summary([
+                ...$result,
+                'user_id' => auth()->id(),
+                'created_by' => auth()->id(),
+                'updated_by' => auth()->id(),
+            ]);
 
-        $summary = new Summary([
-            ...$result,
-            'user_id' => auth()->id(),
-            'created_by' => auth()->id(),
-            'updated_by' => auth()->id(),
-        ]);
+            $summary->save();
 
-        $summary->save();
-
-        return new DataResponse(
-            data: new SummaryResource($summary),
-            status: Http::OK,
-            message: 'Summary created successfully'
-        );
+            return new DataResponse(
+                data: new SummaryResource($summary),
+                status: Http::OK,
+                message: 'Summary created successfully'
+            );
+        } catch (Exception $exception) {
+            report($exception);
+            return new DataResponse(
+                status: Http::INTERNAL_SERVER_ERROR,
+                message: $exception->getMessage()
+            );
+        }
     }
 }
