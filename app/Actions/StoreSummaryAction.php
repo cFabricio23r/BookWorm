@@ -3,17 +3,11 @@
 namespace App\Actions;
 
 use App\DTOs\StoreEditSummaryDTO;
-use App\Enums\OpenAIModelEnum;
 use App\Http\Resources\SummaryResource;
 use App\Models\Summary;
 use App\Responses\DataResponse;
 use Exception;
-use Illuminate\Http\UploadedFile;
 use JustSteveKing\StatusCode\Http;
-use Smalot\PdfParser\Page;
-use Smalot\PdfParser\Parser;
-use Smalot\PdfParser\PDFObject;
-use Spatie\LaravelData\Support\Types\Type;
 use Supports\Traits\OpenAITrait;
 
 class StoreSummaryAction
@@ -25,17 +19,32 @@ class StoreSummaryAction
      */
     public function execute(StoreEditSummaryDTO $summarizeDTO): DataResponse
     {
-        if ($summarizeDTO->isRequiredFieldFilled()) {
-            $book = $this->parseAndProcessPdf($summarizeDTO->file);
+        if (! $summarizeDTO->isRequiredFieldFilled()) {
+            return new DataResponse(
+                status: Http::UNPROCESSABLE_ENTITY,
+                message: 'Please fill all required fields'
+            );
+        }
+        try {
+            $result = $this->startAssistantWithThread(
+                $summarizeDTO->file,
+                config('assistants.book_worm'),
+                config('prompts.initial_message')
+            );
 
-            $result = $this->generateSummary($book);
-
+            if (isset($result['answer'])) {
+                return new DataResponse(
+                    data: ['message' => 'Summary could not be created. Please try again.',
+                        'data' => $result['answer']],
+                    status: Http::OK,
+                    message: 'Summary created successfully'
+                );
+            }
             $summary = new Summary([
                 ...$result,
                 'user_id' => auth()->id(),
                 'created_by' => auth()->id(),
                 'updated_by' => auth()->id(),
-                'context' => $book,
             ]);
 
             $summary->save();
@@ -45,50 +54,13 @@ class StoreSummaryAction
                 status: Http::OK,
                 message: 'Summary created successfully'
             );
+        } catch (Exception $exception) {
+            report($exception);
+
+            return new DataResponse(
+                status: Http::INTERNAL_SERVER_ERROR,
+                message: $exception->getMessage()
+            );
         }
-
-        return new DataResponse(
-            status: Http::UNPROCESSABLE_ENTITY,
-            message: 'Please fill all required fields'
-        );
-
-    }
-
-    /**
-     * @param  array<Type>  $book
-     */
-    private function generateSummary(array $book): mixed
-    {
-        return $this->chatOpenAI(
-            OpenAIModelEnum::GPT4,
-            [
-                $this->systemMessage(config('prompts.function_request')),
-                ...$book,
-            ],
-            [
-                config('prompts.book_summary_function'),
-            ]
-        );
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function parseAndProcessPdf(UploadedFile|PDFObject|string $file): mixed
-    {
-        $parser = new Parser();
-        $pdf = $parser->parseFile($file);
-
-        return $this->processPages($pdf->getPages());
-    }
-
-    /**
-     * @param  array<Page>  $pages
-     */
-    private function processPages(array $pages): mixed
-    {
-        return array_map(function ($page) {
-            return $this->userMessage($page->getText());
-        }, $pages);
     }
 }

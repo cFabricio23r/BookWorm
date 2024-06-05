@@ -28,6 +28,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $file_id
+ * @property string|null $thread_id
+ * @property string|null $assistant_id
  * @property-read \App\Models\User|null $createdBy
  * @property-read \App\Models\User|null $updatedBy
  * @property-read \App\Models\User|null $user
@@ -36,14 +39,17 @@ namespace App\Models{
  * @method static \App\Builders\SummaryQueryBuilder|Summary newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Summary onlyTrashed()
  * @method static \App\Builders\SummaryQueryBuilder|Summary query()
+ * @method static \App\Builders\SummaryQueryBuilder|Summary whereAssistantId($value)
  * @method static \App\Builders\SummaryQueryBuilder|Summary whereAuthor($value)
  * @method static \App\Builders\SummaryQueryBuilder|Summary whereContext($value)
  * @method static \App\Builders\SummaryQueryBuilder|Summary whereCreatedAt($value)
  * @method static \App\Builders\SummaryQueryBuilder|Summary whereCreatedBy($value)
  * @method static \App\Builders\SummaryQueryBuilder|Summary whereDeletedAt($value)
+ * @method static \App\Builders\SummaryQueryBuilder|Summary whereFileId($value)
  * @method static \App\Builders\SummaryQueryBuilder|Summary whereId($value)
  * @method static \App\Builders\SummaryQueryBuilder|Summary whereKeyAspects($value)
  * @method static \App\Builders\SummaryQueryBuilder|Summary whereSummary($value)
+ * @method static \App\Builders\SummaryQueryBuilder|Summary whereThreadId($value)
  * @method static \App\Builders\SummaryQueryBuilder|Summary whereTitle($value)
  * @method static \App\Builders\SummaryQueryBuilder|Summary whereUpdatedAt($value)
  * @method static \App\Builders\SummaryQueryBuilder|Summary whereUpdatedBy($value)

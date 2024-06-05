@@ -32,6 +32,9 @@ class Summary extends Model
         'created_by',
         'updated_by',
         'context',
+        'file_id',
+        'thread_id',
+        'assistant_id',
     ];
 
     /**

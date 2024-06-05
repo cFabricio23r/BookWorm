@@ -20,3 +20,20 @@ if (! function_exists('per_page_from_request')) {
         );
     }
 }
+
+if (! function_exists('get_string_between')) {
+    function get_string_between($string, $start, $end): string
+    {
+        $string = ' '.$string;
+        $ini = strpos($string, $start);
+        if ($ini == 0) {
+            return '';
+        }
+        $ini += strlen($start);
+        $len = strpos($string, $end, $ini) - $ini;
+        $string = substr($string, $ini, $len);
+        $string = str_replace("\r", '', $string);
+
+        return str_replace("\n", '', $string);
+    }
+}

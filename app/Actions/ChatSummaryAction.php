@@ -3,7 +3,6 @@
 namespace App\Actions;
 
 use App\DTOs\ChatSummaryDTO;
-use App\Enums\OpenAIModelEnum;
 use App\Models\Summary;
 use App\Responses\DataResponse;
 use Exception;
@@ -19,42 +18,30 @@ class ChatSummaryAction
      */
     public function execute(ChatSummaryDTO $chatSummaryDTO, Summary $summary): DataResponse
     {
-        if ($chatSummaryDTO->isRequiredFieldFilled()) {
-            $question = $this->userMessage($chatSummaryDTO->question);
-            $context = $summary->context;
+        if (! $chatSummaryDTO->isRequiredFieldFilled()) {
+            return new DataResponse(
+                status: Http::UNPROCESSABLE_ENTITY,
+                message: 'Please fill all required fields'
+            );
+        }
 
-            $result = $this->chat($summary->context, [$question]);
-            $context[] = $question;
-            $context[] = $this->assistantMessage($result);
-
-            $summary->update([
-                'context' => $context,
-            ]);
+        try {
+            $answer = $this->chatWithExistingThread($summary->assistant_id, $chatSummaryDTO->question, $summary->thread_id);
 
             return new DataResponse(
                 data: [
-                    'answer' => $result,
+                    'answer' => $answer,
                 ],
                 status: Http::OK,
                 message: 'Summary created successfully'
             );
+        } catch (Exception $exception) {
+            report($exception);
+
+            return new DataResponse(
+                status: Http::INTERNAL_SERVER_ERROR,
+                message: $exception->getMessage()
+            );
         }
-
-        return new DataResponse(
-            status: Http::UNPROCESSABLE_ENTITY,
-            message: 'Please fill all required fields'
-        );
-
-    }
-
-    private function chat(array $context, array $question): mixed
-    {
-        return $this->chatOpenAI(
-            OpenAIModelEnum::GPT4,
-            [
-                ...$context,
-                ...$question,
-            ],
-        );
     }
 }

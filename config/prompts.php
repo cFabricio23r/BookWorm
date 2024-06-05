@@ -3,6 +3,14 @@
 return [
     'function_request' => 'Perform function requests for the user following the instructions',
 
+    'initial_message' => 'Please provide the following information about the book in JSON string format do not add any other information on response, only the response in JSON format
+
+    title: The title of the book.
+    author: The author(s) of the book.
+    year: The year the book was published.
+    key_aspects: At least 10 key aspects of the entire book. For each aspect, include a small title and detailed description, also the page number where it was taken from.
+    summary: A brief summary of the book.',
+
     'book_summary_function' => [
         'name' => 'book_summary',
         'description' => 'Get a full detailed insight of book provided by the user',
