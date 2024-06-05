@@ -8,7 +8,7 @@ return [
     title: The title of the book.
     author: The author(s) of the book.
     year: The year the book was published.
-    key_aspects: At least 5 key aspects of the book. For each aspect, include a brief description and the page number where it is discussed.
+    key_aspects: At least 10 key aspects of the entire book. For each aspect, include a small title and detailed description, also the page number where it was taken from.
     summary: A brief summary of the book.',
 
     'book_summary_function' => [

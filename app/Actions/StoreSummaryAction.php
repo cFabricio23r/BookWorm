@@ -19,7 +19,7 @@ class StoreSummaryAction
      */
     public function execute(StoreEditSummaryDTO $summarizeDTO): DataResponse
     {
-        if (!$summarizeDTO->isRequiredFieldFilled()) {
+        if (! $summarizeDTO->isRequiredFieldFilled()) {
             return new DataResponse(
                 status: Http::UNPROCESSABLE_ENTITY,
                 message: 'Please fill all required fields'
@@ -32,6 +32,14 @@ class StoreSummaryAction
                 config('prompts.initial_message')
             );
 
+            if (isset($result['answer'])) {
+                return new DataResponse(
+                    data: ['message' => 'Summary could not be created. Please try again.',
+                        'data' => $result['answer']],
+                    status: Http::OK,
+                    message: 'Summary created successfully'
+                );
+            }
             $summary = new Summary([
                 ...$result,
                 'user_id' => auth()->id(),
@@ -48,6 +56,7 @@ class StoreSummaryAction
             );
         } catch (Exception $exception) {
             report($exception);
+
             return new DataResponse(
                 status: Http::INTERNAL_SERVER_ERROR,
                 message: $exception->getMessage()

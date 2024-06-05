@@ -31,7 +31,9 @@ if (! function_exists('get_string_between')) {
         }
         $ini += strlen($start);
         $len = strpos($string, $end, $ini) - $ini;
+        $string = substr($string, $ini, $len);
+        $string = str_replace("\r", '', $string);
 
-        return substr($string, $ini, $len);
+        return str_replace("\n", '', $string);
     }
 }

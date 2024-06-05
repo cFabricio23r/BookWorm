@@ -18,7 +18,7 @@ class ChatSummaryAction
      */
     public function execute(ChatSummaryDTO $chatSummaryDTO, Summary $summary): DataResponse
     {
-        if (!$chatSummaryDTO->isRequiredFieldFilled()) {
+        if (! $chatSummaryDTO->isRequiredFieldFilled()) {
             return new DataResponse(
                 status: Http::UNPROCESSABLE_ENTITY,
                 message: 'Please fill all required fields'
@@ -37,6 +37,7 @@ class ChatSummaryAction
             );
         } catch (Exception $exception) {
             report($exception);
+
             return new DataResponse(
                 status: Http::INTERNAL_SERVER_ERROR,
                 message: $exception->getMessage()

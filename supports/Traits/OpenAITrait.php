@@ -107,9 +107,6 @@ trait OpenAITrait
         return OpenAI::threads()->messages()->list($threadId);
     }
 
-    /**
-     * @return array{assistant_id: mixed, file_id: string}
-     */
     public function startAssistantWithThread(UploadedFile $file, array $assistantConfig, string $initialMessage): array
     {
         $fileResponse = $this->uploadFile($file);
@@ -124,12 +121,13 @@ trait OpenAITrait
 
         $answer = $this->loadAnswer($threadResponse->id);
 
-        return [
+        $response = [
             'assistant_id' => $assistantResponse->id,
             'file_id' => $fileResponse->id,
             'thread_id' => $threadResponse->id,
-            ...$answer,
         ];
+
+        return is_array($answer) ? [...$response, ...$answer] : [...$response, 'answer' => $answer];
     }
 
     public function chatWithExistingThread(string $assistantId, string $message, string $threadId): mixed
